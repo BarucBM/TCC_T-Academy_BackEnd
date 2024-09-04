@@ -4,6 +4,7 @@ package com.TCC.domain.event;
 import com.TCC.domain.company.Company;
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.user.UserEvent;
+import com.TCC.domain.weather.Weather;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,9 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    @OneToMany(mappedBy = "event")
+    private List<Weather> weathers;
 
     @OneToMany(mappedBy = "event")
     private List<Notification> notification;
