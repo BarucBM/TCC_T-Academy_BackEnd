@@ -1,10 +1,33 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Build directories and files
+**/dist/
+**/out-tsc/
+**/target/
+**/build/
+**/nbbuild/
+**/nbdist/
 
-### STS ###
+# Compiled files
+**/*.js
+**/*.js.map
+!tailwind.config.js
+
+# Angular cache
+**/.angular/cache/
+
+# Dependencies
+**/node_modules/
+
+# Environment files
+**/.env
+
+# Temporary and cache files
+**/*.tmp
+**/*.temp
+**/.cache/
+**/temp/
+
+# IDE and editor specific files
+## STS (Spring Tool Suite)
 .apt_generated
 .classpath
 .factorypath
@@ -13,21 +36,54 @@ target/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
+## IntelliJ IDEA
+.idea/
+*/.idea/
 *.iws
 *.iml
 *.ipr
 
-### NetBeans ###
+## NetBeans
 /nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+## VS Code
 .vscode/
+*/.vscode/
+
+# Log files
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Project configuration files
+*.sublime-project
+*.sublime-workspace
+
+# Credentials and certificates
+*.pem
+*.key
+*.crt
+
+# Build files from specific tools
+*.tgz
+*.zip
+
+# Other configurations and temporary files
+*.pid
+*.seed
+*.pid.lock
+*.njsproj
+*.sln
+*.code-workspace
+
+# Maven temporary files (if applicable)
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Exclude Maven wrapper but include build configuration
+!.mvn/wrapper/maven-wrapper.jar
