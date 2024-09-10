@@ -34,7 +34,7 @@ public class EventService {
     }
 
     public Event updateEvent (String id, EventDTO eventDTO){
-        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found!"));
+        Event event = eventRepository.findById(id).orElseThrow(() -> new RuntimeException("Event not found!"));
         BeanUtils.copyProperties(eventDTO, event);
         return eventRepository.save(event);
     }
