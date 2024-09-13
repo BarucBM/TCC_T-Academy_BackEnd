@@ -34,5 +34,5 @@ public class Company {
 
     private String email;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
