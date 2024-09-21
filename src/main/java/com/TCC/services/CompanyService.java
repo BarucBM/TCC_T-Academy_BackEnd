@@ -2,10 +2,17 @@ package com.TCC.services;
 
 import com.TCC.domain.company.Company;
 import com.TCC.domain.company.CompanyDTO;
+import com.TCC.domain.company.CompanyResponseDTO;
+import com.TCC.domain.company.CompanyUserDTO;
+import com.TCC.domain.customer.Customer;
+import com.TCC.domain.user.User;
+import com.TCC.domain.user.UserResponseDTO;
+import com.TCC.domain.user.UserRole;
 import com.TCC.repositories.CompanyRepository;
 import com.TCC.specifications.CompanySpecification;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +21,15 @@ import java.util.List;
 @Service
 public class CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
+    private final UserService userService;
 
-    public List<Company> getAllCompanies(String name, String address, String phone, String email){
+    public CompanyService(CompanyRepository companyRepository, UserService userService) {
+        this.companyRepository = companyRepository;
+        this.userService = userService;
+    }
+
+    public List<Company> getAllCompanies(String name, String address, String phone, String email) {
         Specification<Company> spec = Specification
                 .where(CompanySpecification.emailContains(email))
                 .and(CompanySpecification.phoneContains(phone))
@@ -26,24 +38,46 @@ public class CompanyService {
         return companyRepository.findAll(spec);
     }
 
-    public Company getCompanyById (Long id){
-        return companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found!"));
+
+    public CompanyResponseDTO findCompanyById(String id) {
+        Company company = this.companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + id));
+
+        return this.getCompanyResponseDTO(company);
     }
 
-    public String deleteCompany (Long id){
-        Company company = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found!"));
-        companyRepository.delete(company);
-        return company.getName() + " company deleted!";
+    @Transactional
+    public CompanyResponseDTO createCompanyWithUser(CompanyUserDTO data) {
+        User user = new User();
+        BeanUtils.copyProperties(data.user(), user);
+        user.setRole(UserRole.CUSTOMER);
+
+        Company company = new Company();
+        BeanUtils.copyProperties(data.company(), company);
+
+        company.setUser(userService.createUser(user));
+
+        return this.getCompanyResponseDTO(companyRepository.save(company));
     }
 
-    public Company createCompany (Company company){
-        return companyRepository.save(company);
+    @Transactional
+    public void updateCompany(String id, CompanyDTO companyDTO) {
+        Company existingCompany = companyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + id));
+
+        BeanUtils.copyProperties(companyDTO, existingCompany);
+
+        companyRepository.save(existingCompany);
     }
 
-    public Company updateCompany (Long id, CompanyDTO companyDTO){
-        Company company = companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found!"));
-        BeanUtils.copyProperties(companyDTO, company);
-        return companyRepository.save(company);
+    private CompanyResponseDTO getCompanyResponseDTO(Company company) {
+        return new CompanyResponseDTO(
+                company.getId(),
+                company.getName(),
+                company.getAddress(),
+                company.getPhone(),
+                company.getDuns(),
+                new UserResponseDTO(company.getUser().getId(), company.getUser().getEmail(), company.getUser().getGoogleApiToken())
+        );
     }
 }

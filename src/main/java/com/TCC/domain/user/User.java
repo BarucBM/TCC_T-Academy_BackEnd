@@ -1,87 +1,73 @@
 package com.TCC.domain.user;
 
-import com.TCC.domain.notification.Notification;
-import com.TCC.domain.preferences.Preference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-@Entity
 @Table(name = "users")
+@Entity()
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class User //implements UserDetails
-{
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     private String email;
 
-    private String googleApiToken;
+    private String password;
 
-    private LocalDateTime createdAt = LocalDateTime.now();;
+    private String googleApiToken;
 
     private UserRole role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Preference> preference;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_notification",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "notification_id")
-    )
-    private List<Notification> notifications;
+    // @OneToMany(mappedBy = "user")
+    // private List<Preference> preference;
 
-//    @OneToMany
-//    private UserNotification userNotification;
+    // @ManyToMany
+    // @JoinTable(
+    //         name = "user_notification",
+    //         joinColumns = @JoinColumn(name = "user_id"),
+    //         inverseJoinColumns = @JoinColumn(name = "notification_id")
+    // )
+    // private List<Notification> notifications;
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of();
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return "";
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return "";
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return UserDetails.super.isAccountNonExpired();
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return UserDetails.super.isAccountNonLocked();
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return UserDetails.super.isCredentialsNonExpired();
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return UserDetails.super.isEnabled();
-//    }
+    // @OneToMany
+    // private UserNotification userNotification;
+
+    public User(String email, String password, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 }

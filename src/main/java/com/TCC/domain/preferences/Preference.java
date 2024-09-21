@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 public class Preference {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     private User user;
