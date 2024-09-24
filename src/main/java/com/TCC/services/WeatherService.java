@@ -14,8 +14,10 @@ import java.util.List;
 
 @Service
 public class WeatherService {
+
     @Autowired
     private WeatherRepository weatherRepository;
+
 
     public List<Weather> getAllWeathers(){
         return weatherRepository.findAll();

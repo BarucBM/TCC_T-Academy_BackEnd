@@ -44,7 +44,7 @@ public class Event {
 
     private LocalDateTime endTime;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private String location;
 
