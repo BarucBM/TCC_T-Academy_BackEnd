@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
 
-    public Optional<Event> findById (String id);
+    public Optional<Weather> findById (Long id);
 }

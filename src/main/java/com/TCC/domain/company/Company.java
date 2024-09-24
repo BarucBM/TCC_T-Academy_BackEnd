@@ -26,6 +26,8 @@ public class Company {
     @JsonIgnore
     private Event[] events;
 
+    private String duns;
+
     private String name;
 
     private String address;
