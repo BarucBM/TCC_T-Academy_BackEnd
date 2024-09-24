@@ -35,8 +35,8 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private List<UserEvent> userEvent;
 
-    @ManyToOne
-    private Company company;
+//    @ManyToOne
+//    private Company company;
 
     private String title;
 

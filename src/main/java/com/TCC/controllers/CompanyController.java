@@ -2,9 +2,9 @@ package com.TCC.controllers;
 
 import com.TCC.domain.company.Company;
 import com.TCC.domain.company.CompanyDTO;
+import com.TCC.domain.company.CompanyResponseDTO;
 import com.TCC.services.CompanyService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,25 +30,14 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Company> getCompanyyId (@PathVariable(value = "id") Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(companyService.getCompanyById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<Company> createCompany (@RequestBody @Valid CompanyDTO companyDto){
-        Company company = new Company();
-        BeanUtils.copyProperties(companyDto, company);
-        return ResponseEntity.status(HttpStatus.OK).body(companyService.createCompany(company));
-    }
-
-    @DeleteMapping (path = "/{id}")
-    public ResponseEntity<String> deleteCompany (@PathVariable(value = "id") Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(companyService.deleteCompany(id));
+    public ResponseEntity<CompanyResponseDTO> getCompanyById (@PathVariable(value = "id") String id){
+        return ResponseEntity.status(HttpStatus.OK).body(companyService.findCompanyById(id));
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Company> updateCompany (@PathVariable(value = "id") Long id, @RequestBody @Valid CompanyDTO companyDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(companyService.updateCompany(id, companyDTO));
+    public ResponseEntity<Company> updateCompany (@PathVariable(value = "id") String id, @RequestBody @Valid CompanyDTO companyDTO){
+        companyService.updateCompany(id, companyDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }

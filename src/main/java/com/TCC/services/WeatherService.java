@@ -21,12 +21,12 @@ public class WeatherService {
         return weatherRepository.findAll();
     }
 
-    public Weather getWeatherById (Long id){
+    public Weather getWeatherById (String id){
         return weatherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Weather not found!"));
     }
 
-    public String deleteWeather (Long id){
+    public String deleteWeather (String id){
         Weather weather = weatherRepository.findById(id).orElseThrow(() -> new RuntimeException("Weather not found!"));
         weatherRepository.delete(weather);
         return "Weather deleted!";
@@ -36,7 +36,7 @@ public class WeatherService {
         return weatherRepository.save(weather);
     }
 
-    public Weather updateWeather (Long id, WeatherDTO weatherDTO){
+    public Weather updateWeather (String id, WeatherDTO weatherDTO){
         Weather weather = weatherRepository.findById(id).orElseThrow(() -> new RuntimeException("Weather not found!"));
         BeanUtils.copyProperties(weatherDTO, weather);
         return weatherRepository.save(weather);

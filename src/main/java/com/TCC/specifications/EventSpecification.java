@@ -1,4 +1,4 @@
-package com.TCC.specification;
+package com.TCC.specifications;
 
 import com.TCC.domain.event.Event;
 import org.springframework.data.jpa.domain.Specification;

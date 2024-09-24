@@ -1,11 +1,10 @@
-package com.TCC.domain.company;
+package com.TCC.domain.customer;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record CompanyDTO(
+public record CustomerDTO(
         @NotBlank String name,
         @NotBlank String address,
-        @NotBlank String phone,
-        @NotBlank String duns
+        @NotBlank String phone
 ) {
 }
