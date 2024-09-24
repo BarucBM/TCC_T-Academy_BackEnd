@@ -32,6 +32,9 @@ public class Notification {
 //    @OneToMany
 //    private UserNotification userNotification;
 
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String message;
 
     private LocalDateTime sentAt;
@@ -39,5 +42,13 @@ public class Notification {
     private String type;
 
     private String status;
+
+    private boolean eventNotifications;
+
+    private boolean reminderNotifications;
+
+    private boolean weatherNotifications;
+
+
 
 }
