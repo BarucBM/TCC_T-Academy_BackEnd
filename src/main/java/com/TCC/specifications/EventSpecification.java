@@ -20,8 +20,4 @@ public class EventSpecification {
                 description == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),"%" + description.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> emailContains(String email){
-        return ((root, query, criteriaBuilder) ->
-                email == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("email")),"%" + email.toLowerCase() + "%"));
-    }
 }

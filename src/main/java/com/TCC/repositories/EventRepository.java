@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, String>, JpaSpecificationExecutor<Event> {
 
-    public Optional<Event> findById (String id);
+    Optional<Event> findById (String id);
 }
