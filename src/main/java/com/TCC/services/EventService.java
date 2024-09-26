@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -17,11 +18,12 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
-    public List<Event> getAllEvents(String title, String location, String description){
+    public List<Event> getAllEvents(String title, String location, String description, LocalDate firsDate, LocalDate secondDate){
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(title))
                 .and(EventSpecification.locationContains(location))
-                .and(EventSpecification.descriptionContains(description));
+                .and(EventSpecification.descriptionContains(description))
+                .and(EventSpecification.hasStartTimeBetween(firsDate, secondDate));
         return eventRepository.findAll(spec);
     }
 

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,9 +25,11 @@ public class EventController {
     public ResponseEntity<List<Event>> getAllEvents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String description
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) LocalDate firstDate,
+            @RequestParam(required = false) LocalDate secondDate
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, location, description));
+        return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, location, description, firstDate, secondDate ));
     }
 
     @GetMapping(path = "/{id}")
