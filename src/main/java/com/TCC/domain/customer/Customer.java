@@ -1,19 +1,17 @@
-package com.TCC.domain.company;
+package com.TCC.domain.customer;
 
 import com.TCC.domain.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Entity
-@Table(name = "companies")
+@Table(name = "customers")
+@Entity()
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Company {
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -27,6 +25,4 @@ public class Company {
     private String address;
 
     private String phone;
-
-    private String duns;
 }

@@ -20,14 +20,14 @@ import java.util.List;
 public class Notification {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     private Event event;
 
-    @ManyToMany(mappedBy = "notifications")
-    private List<User> users;
+//    @ManyToMany(mappedBy = "notifications")
+//    private List<User> users;
 
 //  @OneToMany
 //  private UserNotification userNotification;

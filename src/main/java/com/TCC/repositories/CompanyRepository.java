@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
+public interface CompanyRepository extends JpaRepository<Company, String>, JpaSpecificationExecutor<Company> {
 
-    public Optional<Company> findById (Long id);
 }
