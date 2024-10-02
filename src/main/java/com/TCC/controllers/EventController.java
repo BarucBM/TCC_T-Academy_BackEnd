@@ -24,12 +24,10 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) LocalDate firstDate,
-            @RequestParam(required = false) LocalDate secondDate
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
     ){
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, location, description, firstDate, secondDate ));
+        return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, startDate, endDate));
     }
 
     @GetMapping(path = "/{id}")

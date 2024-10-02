@@ -18,11 +18,11 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
-    public List<Event> getAllEvents(String title, String location, String description, LocalDate firsDate, LocalDate secondDate){
+    public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate){
         Specification<Event> spec = Specification
-                .where(EventSpecification.titleContains(title))
-                .and(EventSpecification.locationContains(location))
-                .and(EventSpecification.descriptionContains(description))
+                .where(EventSpecification.titleContains(search))
+                .or(EventSpecification.locationContains(search))
+                .or(EventSpecification.descriptionContains(search))
                 .and(EventSpecification.hasStartTimeBetween(firsDate, secondDate));
         return eventRepository.findAll(spec);
     }

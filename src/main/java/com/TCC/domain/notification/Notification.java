@@ -29,8 +29,8 @@ public class Notification {
     @ManyToMany(mappedBy = "notifications")
     private List<User> users;
 
-//    @OneToMany
-//    private UserNotification userNotification;
+//  @OneToMany
+//  private UserNotification userNotification;
 
     private String message;
 

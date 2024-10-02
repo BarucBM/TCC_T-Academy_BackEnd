@@ -9,19 +9,19 @@ import java.time.LocalDateTime;
 
 public class EventSpecification {
 
-    public static Specification<Event> titleContains(String title){
+    public static Specification<Event> titleContains(String search){
         return ((root, query, criteriaBuilder) ->
-                title == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),"%" +title.toLowerCase()+ "%"));
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),"%" +search.toLowerCase()+ "%"));
     }
 
-    public static Specification<Event> locationContains(String location){
+    public static Specification<Event> locationContains(String search){
         return ((root, query, criteriaBuilder) ->
-                location == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("location")),"%" + location.toLowerCase() + "%"));
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("location")),"%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> descriptionContains(String description){
+    public static Specification<Event> descriptionContains(String search){
         return ((root, query, criteriaBuilder) ->
-                description == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),"%" + description.toLowerCase() + "%"));
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),"%" + search.toLowerCase() + "%"));
     }
 
     public static Specification<Event> hasStartTimeBetween(LocalDate firstDate, LocalDate secondDate) {
