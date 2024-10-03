@@ -1,10 +1,8 @@
 package com.TCC.services;
 
-import com.TCC.domain.event.Event;
-import com.TCC.domain.event.EventDTO;
+
 import com.TCC.domain.weather.Weather;
 import com.TCC.domain.weather.WeatherDTO;
-import com.TCC.repositories.EventRepository;
 import com.TCC.repositories.WeatherRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,10 @@ import java.util.List;
 
 @Service
 public class WeatherService {
+
     @Autowired
     private WeatherRepository weatherRepository;
+
 
     public List<Weather> getAllWeathers(){
         return weatherRepository.findAll();

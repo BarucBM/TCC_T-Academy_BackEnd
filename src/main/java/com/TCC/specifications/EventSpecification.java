@@ -1,30 +1,40 @@
 package com.TCC.specifications;
 
+
 import com.TCC.domain.event.Event;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
+
+import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 
 public class EventSpecification {
 
-    public static Specification<Event> hasTitle(String title) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(root.get("title"), "%" + title + "%");
+    public static Specification<Event> titleContains(String search){
+        return ((root, query, criteriaBuilder) ->
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),"%" +search.toLowerCase()+ "%"));
     }
 
-    public static Specification<Event> hasLocation(String location) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(root.get("location"), "%" + location + "%");
+    public static Specification<Event> locationContains(String search){
+        return ((root, query, criteriaBuilder) ->
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("location")),"%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> isWeatherImpact(Boolean weatherImpact) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("weatherImpact"), weatherImpact);
+    public static Specification<Event> descriptionContains(String search){
+        return ((root, query, criteriaBuilder) ->
+                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),"%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> isBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.between(root.get("startTime"), startDate, endDate);
+    public static Specification<Event> hasStartTimeBetween(LocalDate firstDate, LocalDate secondDate) {
+
+
+        if (firstDate != null || secondDate!= null ){
+            LocalDateTime startDate = firstDate.atStartOfDay();
+            LocalDateTime endDate = secondDate.atTime(23,59,59);
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"),startDate, endDate ));
+        } else {
+            return null;
+        }
+
     }
 }
