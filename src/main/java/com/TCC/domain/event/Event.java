@@ -1,7 +1,7 @@
 package com.TCC.domain.event;
 
 
-import com.TCC.domain.company.Company;
+
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.user.UserEvent;
 import com.TCC.domain.weather.Weather;
