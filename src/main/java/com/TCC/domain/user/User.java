@@ -1,5 +1,7 @@
 package com.TCC.domain.user;
 
+import com.TCC.domain.notification.Notification;
+import com.TCC.domain.preferences.Preference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,12 +14,12 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
+@Entity
 @Table(name = "users")
-@Entity()
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
