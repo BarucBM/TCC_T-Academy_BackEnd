@@ -55,25 +55,4 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> searchEvents(String title, String location, Boolean weatherImpact, LocalDateTime startDate, LocalDateTime endDate) {
-        Specification<Event> spec = Specification.where(null);
-
-        if (StringUtils.hasText(title)) {
-            spec = spec.and(EventSpecification.hasTitle(title));
-        }
-
-        if (StringUtils.hasText(location)) {
-            spec = spec.and(EventSpecification.hasLocation(location));
-        }
-
-        if (weatherImpact != null) {
-            spec = spec.and(EventSpecification.isWeatherImpact(weatherImpact));
-        }
-
-        if (startDate != null && endDate != null) {
-            spec = spec.and(EventSpecification.isBetweenDates(startDate, endDate));
-        }
-
-        return eventRepository.findAll(spec);
-    }
 }
