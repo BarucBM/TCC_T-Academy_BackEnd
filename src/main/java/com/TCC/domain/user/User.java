@@ -1,5 +1,7 @@
 package com.TCC.domain.user;
 
+import com.TCC.domain.cart.Cart;
+import com.TCC.domain.preferences.Preference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,15 +11,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+
 import java.util.Collection;
 import java.util.Collections;
 
+@Entity
 @Table(name = "users")
-@Entity()
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
@@ -36,8 +39,11 @@ public class User implements UserDetails {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // @OneToMany(mappedBy = "user")
-    // private List<Preference> preference;
+    @OneToMany(mappedBy = "user")
+    private Preference preference;
+
+    @OneToOne
+    private Cart cart;
 
     // @ManyToMany
     // @JoinTable(
