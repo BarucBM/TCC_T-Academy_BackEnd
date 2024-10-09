@@ -1,28 +1,37 @@
 package com.TCC.services;
 
+import com.TCC.domain.address.Address;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
+import com.TCC.domain.image.Image;
 import com.TCC.repositories.EventRepository;
 import com.TCC.specifications.EventSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import java.time.LocalDate;
-
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class EventService {
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final ImageService imageService;
+    private final AddressService addressService;
 
+    public EventService(EventRepository eventRepository, ImageService imageService, AddressService addressService) {
+        this.eventRepository = eventRepository;
+        this.imageService = imageService;
+        this.addressService = addressService;
+    }
 
-    public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate){
+    public List<Event> getAllEvents(String search, LocalDateTime firsDate, LocalDateTime secondDate) {
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(search))
                 .or(EventSpecification.locationContains(search))
@@ -44,7 +53,26 @@ public class EventService {
         return event.getTitle() + " event deleted!";
     }
 
-    public Event createEvent(Event event) {
+    @Transactional
+    public Event createEvent(EventDTO eventDTO) {
+        Event event = new Event();
+        BeanUtils.copyProperties(eventDTO, event);
+
+        List<Image> images = new ArrayList<>();
+
+        try {
+            for (MultipartFile file : eventDTO.images()) {
+               images.add(imageService.uploadImage(file));
+            }
+
+            event.setImages(images);
+
+            Address address = addressService.createAddress(eventDTO.address());
+            event.setAddress(address);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
         return eventRepository.save(event);
     }
 
@@ -55,23 +83,19 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> searchEvents(String title, String location, Boolean weatherImpact, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<Event> searchEvents(String title, String location, LocalDateTime startDate, LocalDateTime endDate) {
         Specification<Event> spec = Specification.where(null);
 
         if (StringUtils.hasText(title)) {
-            spec = spec.and(EventSpecification.hasTitle(title));
+            spec = spec.and(EventSpecification.titleContains(title));
         }
 
         if (StringUtils.hasText(location)) {
-            spec = spec.and(EventSpecification.hasLocation(location));
-        }
-
-        if (weatherImpact != null) {
-            spec = spec.and(EventSpecification.isWeatherImpact(weatherImpact));
+            spec = spec.and(EventSpecification.locationContains(location));
         }
 
         if (startDate != null && endDate != null) {
-            spec = spec.and(EventSpecification.isBetweenDates(startDate, endDate));
+            spec = spec.and(EventSpecification.hasStartTimeBetween(startDate, endDate));
         }
 
         return eventRepository.findAll(spec);

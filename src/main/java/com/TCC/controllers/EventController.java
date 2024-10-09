@@ -4,14 +4,12 @@ import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
 import com.TCC.services.EventService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -24,8 +22,8 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate
+            @RequestParam(required = false) LocalDateTime startDate,
+            @RequestParam(required = false) LocalDateTime endDate
     ){
         return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, startDate, endDate));
 
@@ -36,11 +34,9 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.getEventById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody @Valid EventDTO eventDTO) {
-        Event event = new Event();
-        BeanUtils.copyProperties(eventDTO, event);
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.createEvent(event));
+    @PostMapping()
+    public ResponseEntity<Event> createEvent(@ModelAttribute @Valid EventDTO eventDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(eventService.createEvent(eventDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -57,9 +53,8 @@ public class EventController {
     public ResponseEntity<List<Event>> searchEvents(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) Boolean weatherImpact,
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate) {
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.searchEvents(title, location, weatherImpact, startDate, endDate));
+        return ResponseEntity.status(HttpStatus.OK).body(eventService.searchEvents(title, location, startDate, endDate));
     }
 }
