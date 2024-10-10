@@ -32,6 +32,7 @@ public class Notification {
 //  private UserNotification userNotification;
 
     @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
     private User user;
 
     private String message;
