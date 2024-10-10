@@ -2,6 +2,9 @@ package com.TCC.domain.event;
 
 
 
+import com.TCC.domain.address.Address;
+import com.TCC.domain.company.Company;
+import com.TCC.domain.image.Image;
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.user.UserEvent;
 import com.TCC.domain.weather.Weather;
@@ -10,7 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,36 +28,46 @@ import java.util.List;
 public class Event {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @OneToMany(mappedBy = "event")
-    private List<Weather> weathers;
-
-    @OneToMany(mappedBy = "event")
-    private List<Notification> notification;
-
-    @OneToMany(mappedBy = "event")
-    private List<UserEvent> userEvent;
-
-//    @ManyToOne
-//    private Company company;
-
     private String title;
+
+    private String description;
 
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private Boolean freeEntry;
 
-    private String location;
+    private BigDecimal ticketUnitPrice;
 
-    private String description;
+    private BigDecimal ticketTax;
 
-    //TODO - Possível troca para um enum indicando qual impacto do clima
-    private Boolean weatherImpact;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @ManyToOne
+    private Address address;
 
+    @ManyToOne
+    private Company company;
 
+    @ManyToMany
+    @JoinTable(
+            name = "event_images",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "event")
+    private List<Weather> weathers;
+
+    @OneToMany(mappedBy = "event")
+    private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "event")
+    private List<UserEvent> usersEvent;
 }
