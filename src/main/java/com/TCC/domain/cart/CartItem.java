@@ -1,15 +1,17 @@
 package com.TCC.domain.cart;
 
-import com.TCC.domain.event.Event;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "cart_item")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItem {
 
     @Id
@@ -17,11 +19,9 @@ public class CartItem {
     private Long id;
 
     @ManyToOne
-    private Event event;
-
-    @ManyToOne
     private Cart cart;
 
-    private Integer quantity;
+    private String eventId;
 
+    private Integer quantity;
 }
