@@ -26,7 +26,7 @@ public class WeatherController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Weather> getWeatherById (@PathVariable(value = "id") Long id){
+    public ResponseEntity<Weather> getWeatherById (@PathVariable(value = "id") String id){
         return ResponseEntity.status(HttpStatus.OK).body(weatherService.getWeatherById(id));
     }
 
@@ -38,12 +38,12 @@ public class WeatherController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<String> deleteWeather (@PathVariable(value = "id") Long id){
+    public ResponseEntity<String> deleteWeather (@PathVariable(value = "id") String id){
         return ResponseEntity.status(HttpStatus.OK).body(weatherService.deleteWeather(id));
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Weather> updateEvent (@PathVariable(value = "id") Long id, @RequestBody @Valid WeatherDTO weatherDTO){
+    public ResponseEntity<Weather> updateEvent (@PathVariable(value = "id") String id, @RequestBody @Valid WeatherDTO weatherDTO){
         return ResponseEntity.status(HttpStatus.OK).body(weatherService.updateWeather(id, weatherDTO));
     }
 }
