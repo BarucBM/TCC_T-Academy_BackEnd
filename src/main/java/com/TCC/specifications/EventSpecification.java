@@ -23,7 +23,7 @@ public class EventSpecification {
     public static Specification<Event> hasStartTimeBetween(LocalDate firstDate, LocalDate secondDate) {
 
 
-        if (firstDate != null || secondDate!= null ){
+        if (firstDate != null && secondDate!= null){
             LocalDateTime startDate = firstDate.atStartOfDay();
             LocalDateTime endDate = secondDate.atTime(23,59,59);
             return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"),startDate, endDate ));
