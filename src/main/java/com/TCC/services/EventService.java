@@ -21,7 +21,6 @@ public class EventService {
     public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate){
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(search))
-                .or(EventSpecification.locationContains(search))
                 .or(EventSpecification.descriptionContains(search))
                 .and(EventSpecification.hasStartTimeBetween(firsDate, secondDate));
         return eventRepository.findAll(spec);
