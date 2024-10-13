@@ -13,19 +13,20 @@ public class EventSpecification {
                 search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> locationContains(String search) {
-        return ((root, query, criteriaBuilder) ->
-                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("location")), "%" + search.toLowerCase() + "%"));
-    }
 
     public static Specification<Event> descriptionContains(String search) {
         return ((root, query, criteriaBuilder) ->
                 search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> hasStartTimeBetween(LocalDateTime firstDate, LocalDateTime secondDate) {
-        if (firstDate != null || secondDate != null) {
-            return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"), firstDate, secondDate));
+  
+    public static Specification<Event> hasStartTimeBetween(LocalDate firstDate, LocalDate secondDate) {
+
+        if (firstDate != null && secondDate!= null){
+            LocalDateTime startDate = firstDate.atStartOfDay();
+            LocalDateTime endDate = secondDate.atTime(23,59,59);
+            return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"),startDate, endDate ));
+
         } else {
             return null;
         }
