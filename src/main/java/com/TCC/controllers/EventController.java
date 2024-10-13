@@ -53,13 +53,4 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.updateEvent(id, eventDTO));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Event>> searchEvents(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) Boolean weatherImpact,
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate) {
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.searchEvents(title, location, weatherImpact, startDate, endDate));
-    }
 }
