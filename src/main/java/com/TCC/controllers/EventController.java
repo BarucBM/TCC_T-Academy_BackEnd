@@ -3,6 +3,7 @@ package com.TCC.controllers;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
 import com.TCC.services.EventService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class EventController {
             @RequestParam(required = false) String title,
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate
-    ){
+    ) {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, startDate, endDate));
 
     }
@@ -40,13 +41,21 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEvent(@PathVariable("id") String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.deleteEvent(id));
+    public ResponseEntity<String> deleteEvent(@PathVariable String id) {
+        try {
+            eventService.deleteEvent(id);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable("id") String id, @RequestBody @Valid EventDTO eventDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(eventService.updateEvent(id, eventDTO));
+    public ResponseEntity<Object> updateEvent(@PathVariable String id, @ModelAttribute @Valid EventDTO eventDTO) {
+        try {
+            return ResponseEntity.ok(eventService.updateEvent(id, eventDTO));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
-
 }

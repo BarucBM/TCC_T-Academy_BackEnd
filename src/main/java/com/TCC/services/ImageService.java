@@ -17,13 +17,22 @@ public class ImageService {
     }
 
     @Transactional
-    public Image uploadImage(MultipartFile file) throws IOException {
+    public Image uploadImage(MultipartFile file) {
         Image image = new Image();
 
-        image.setName(file.getOriginalFilename());
-        image.setType(file.getContentType());
-        image.setPicByte(file.getBytes());
+        try {
+            image.setName(file.getOriginalFilename());
+            image.setType(file.getContentType());
+            image.setPicByte(file.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return imageRepository.save(image);
+    }
+
+    public void deleteImage(Image image) {
+        imageRepository.delete(image);
     }
 }
