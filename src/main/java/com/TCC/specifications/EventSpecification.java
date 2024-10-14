@@ -13,10 +13,6 @@ public class EventSpecification {
                 search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> locationContains(String search) {
-        return ((root, query, criteriaBuilder) ->
-                search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("location")), "%" + search.toLowerCase() + "%"));
-    }
 
     public static Specification<Event> descriptionContains(String search) {
         return ((root, query, criteriaBuilder) ->

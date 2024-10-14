@@ -33,7 +33,6 @@ public class EventService {
     public List<Event> getAllEvents(String search, LocalDateTime firsDate, LocalDateTime secondDate) {
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(search))
-                .or(EventSpecification.locationContains(search))
                 .or(EventSpecification.descriptionContains(search))
                 .and(EventSpecification.hasStartTimeBetween(firsDate, secondDate));
         return eventRepository.findAll(spec);
@@ -98,23 +97,5 @@ public class EventService {
         for (Image image : oldImages) {
             imageService.deleteImage(image);
         }
-    }
-
-    public List<Event> searchEvents(String title, String location, LocalDateTime startDate, LocalDateTime endDate) {
-        Specification<Event> spec = Specification.where(null);
-
-        if (StringUtils.hasText(title)) {
-            spec = spec.and(EventSpecification.titleContains(title));
-        }
-
-        if (StringUtils.hasText(location)) {
-            spec = spec.and(EventSpecification.locationContains(location));
-        }
-
-        if (startDate != null && endDate != null) {
-            spec = spec.and(EventSpecification.hasStartTimeBetween(startDate, endDate));
-        }
-
-        return eventRepository.findAll(spec);
     }
 }
