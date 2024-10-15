@@ -20,7 +20,7 @@ public class EventSpecification {
                 search == null ? null : criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + search.toLowerCase() + "%"));
     }
 
-    public static Specification<Event> hasStartTimeBetween(LocalDateTime firstDate, LocalDateTime secondDate) {
+    public static Specification<Event> hasStartTimeBetween(LocalDate firstDate, LocalDate secondDate) {
         if (firstDate != null || secondDate != null) {
             return ((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("startTime"), firstDate, secondDate));
         } else {
