@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
+import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,7 @@ public class EventService {
         this.addressService = addressService;
     }
 
-    public List<Event> getAllEvents(String search, LocalDateTime firsDate, LocalDateTime secondDate) {
+    public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate) {
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(search))
                 .or(EventSpecification.descriptionContains(search))

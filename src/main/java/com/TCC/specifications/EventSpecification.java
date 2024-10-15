@@ -4,6 +4,7 @@ package com.TCC.specifications;
 import com.TCC.domain.event.Event;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class EventSpecification {

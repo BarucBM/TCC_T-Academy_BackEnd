@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "notifications")
@@ -26,13 +25,14 @@ public class Notification {
     @ManyToOne
     private Event event;
 
-//    @ManyToMany(mappedBy = "notifications")
-//    private List<User> users;
+//  @ManyToMany(mappedBy = "notifications")
+//  private List<User> users;
 
 //  @OneToMany
 //  private UserNotification userNotification;
 
     @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
     private User user;
 
     private String message;
@@ -48,7 +48,5 @@ public class Notification {
     private boolean reminderNotifications;
 
     private boolean weatherNotifications;
-
-
 
 }
