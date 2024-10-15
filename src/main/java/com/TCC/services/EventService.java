@@ -1,11 +1,11 @@
 package com.TCC.services;
 
-import com.TCC.domain.address.Address;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
 import com.TCC.domain.image.Image;
 import com.TCC.repositories.EventRepository;
 import com.TCC.specifications.EventSpecification;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import java.io.IOException;
 import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +45,7 @@ public class EventService {
 
     public Event getEventById(String id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found!"));
-    }
-
-    public String deleteEvent(String id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found!"));
-        eventRepository.delete(event);
-        return event.getTitle() + " event deleted!";
+                .orElseThrow(() -> new EntityNotFoundException("Event not found with ID: " + id));
     }
 
     @Transactional
@@ -58,29 +53,53 @@ public class EventService {
         Event event = new Event();
         BeanUtils.copyProperties(eventDTO, event);
 
+        event.setAddress(addressService.createAddress(eventDTO.address()));
+        this.uploadImages(event, eventDTO.images());
+
+        return eventRepository.save(event);
+    }
+
+    @Transactional
+    public Event updateEvent(String id, EventDTO eventDTO) {
+        Event event = this.getEventById(id);
+        BeanUtils.copyProperties(eventDTO, event);
+
+        this.deleteImages(event);
+        this.uploadImages(event, eventDTO.images());
+
+        event.setAddress(addressService.updateAddress(event.getAddress().getId(), eventDTO.address()));
+
+        return eventRepository.save(event);
+    }
+
+    @Transactional
+    public void deleteEvent(String id) {
+        Event event = this.getEventById(id);
+
+        this.deleteImages(event);
+        addressService.deleteAddress(event.getAddress());
+
+        eventRepository.delete(event);
+    }
+
+    public void uploadImages(Event event, MultipartFile[] files) {
         List<Image> images = new ArrayList<>();
 
-        try {
-            for (MultipartFile file : eventDTO.images()) {
-               images.add(imageService.uploadImage(file));
+        if (files != null) {
+            for (MultipartFile file : files) {
+                images.add(imageService.uploadImage(file));
             }
-
-            event.setImages(images);
-
-            Address address = addressService.createAddress(eventDTO.address());
-            event.setAddress(address);
-        } catch (IOException e) {
-            System.out.println(e);
         }
 
-        return eventRepository.save(event);
+        event.setImages(images);
     }
 
-    public Event updateEvent(String id, EventDTO eventDTO) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found!"));
-        BeanUtils.copyProperties(eventDTO, event);
-        return eventRepository.save(event);
-    }
+    public void deleteImages(Event event) {
+        List<Image> oldImages = event.getImages();
+        event.setImages(new ArrayList<>());
 
+        for (Image image : oldImages) {
+            imageService.deleteImage(image);
+        }
+    }
 }

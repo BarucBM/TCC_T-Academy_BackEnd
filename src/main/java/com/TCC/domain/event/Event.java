@@ -62,12 +62,12 @@ public class Event {
     )
     private List<Image> images;
 
-    @OneToMany(mappedBy = "event")
-    private List<Weather> weathers;
-
-    @OneToMany(mappedBy = "event")
-    private List<Notification> notifications;
-
-    @OneToMany(mappedBy = "event")
-    private List<UserEvent> usersEvent;
+//    @OneToMany(mappedBy = "event")
+//    private List<Weather> weathers;
+//
+//    @OneToMany(mappedBy = "event")
+//    private List<Notification> notifications;
+//
+//    @OneToMany(mappedBy = "event")
+//    private List<UserEvent> usersEvent;
 }
