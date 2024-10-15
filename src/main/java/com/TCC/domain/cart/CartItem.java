@@ -1,32 +1,27 @@
 package com.TCC.domain.cart;
 
-import com.TCC.domain.customer.Customer;
 import jakarta.persistence.*;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "cart")
+@Table(name = "cart_item")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cart {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    private Customer customer;
+    @ManyToOne
+    private Cart cart;
 
-    @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartEvents;
+    private String eventId;
+
+    private Integer quantity;
 }
