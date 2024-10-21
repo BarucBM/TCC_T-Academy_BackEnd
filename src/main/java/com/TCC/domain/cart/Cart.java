@@ -1,6 +1,7 @@
 package com.TCC.domain.cart;
 
 import com.TCC.domain.customer.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -24,7 +25,8 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @JsonIgnore
+    @OneToOne(mappedBy = "cart")
     private Customer customer;
 
     @OneToMany(mappedBy = "cart")

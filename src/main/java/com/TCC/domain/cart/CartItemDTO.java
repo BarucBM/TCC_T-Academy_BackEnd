@@ -1,8 +1,9 @@
 package com.TCC.domain.cart;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CartItemDTO(
         @NotBlank String eventId,
-        @NotBlank Integer quantity
+        @NotNull Integer quantity
 ) { }
