@@ -32,6 +32,10 @@ public class CustomerService {
 
     @Transactional
     public CustomerResponseDTO createCustomerWithUser(CustomerUserDTO data) {
+        if(userService.existsUserByEmail(data.user().email())) {
+            return null;
+        }
+
         User user = new User();
         BeanUtils.copyProperties(data.user(), user);
         user.setRole(UserRole.CUSTOMER);

@@ -29,9 +29,9 @@ public class User implements UserDetails {
 
     private String email;
 
-    private String password;
-
     private String googleApiToken;
+
+    private String password;
 
     private UserRole role;
 
@@ -54,7 +54,6 @@ public class User implements UserDetails {
 
     public User(String email, String password, UserRole role) {
         this.email = email;
-        this.password = password;
         this.role = role;
     }
 
@@ -65,7 +64,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override
