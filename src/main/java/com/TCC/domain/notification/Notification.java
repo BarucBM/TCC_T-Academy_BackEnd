@@ -25,6 +25,8 @@ public class Notification {
     @ManyToOne
     private Event event;
 
+    private String title;
+
 //  @ManyToMany(mappedBy = "notifications")
 //  private List<User> users;
 

@@ -3,6 +3,7 @@ package com.TCC.controllers;
 import com.TCC.domain.notification.Notification;
 import com.TCC.repositories.NotificationRepository;
 import com.TCC.repositories.UserRepository;
+import com.TCC.services.NotificationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class NotificationController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private NotificationsService notificationsService;
+
     // Recuperar preferências de notificação por userId
     @GetMapping("/{userId}")
     public ResponseEntity<List<Notification>> getNotifications(@PathVariable String userId) {
@@ -28,7 +32,7 @@ public class NotificationController {
     }
 
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{userId}/teste")
     public ResponseEntity<Notification> saveNotification(@PathVariable String userId, @RequestBody Notification notification) {
         return userRepository.findById(userId)
                 .map(user -> {
@@ -37,5 +41,10 @@ public class NotificationController {
                     return ResponseEntity.ok(savedNotification);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<String> sendEmail(@PathVariable("id") String userId){
+        return ResponseEntity.ok(notificationsService.sendEmail(userId));
     }
 }
