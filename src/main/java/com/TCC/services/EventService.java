@@ -1,9 +1,12 @@
 package com.TCC.services;
 
+import com.TCC.domain.event.CustomerEventDTO;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
 import com.TCC.domain.image.Image;
+import com.TCC.domain.user.UserEvent;
 import com.TCC.repositories.EventRepository;
+import com.TCC.repositories.UserEventRepository;
 import com.TCC.specifications.EventSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,11 +28,13 @@ import java.util.List;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserEventRepository userEventRepository;
     private final ImageService imageService;
     private final AddressService addressService;
 
-    public EventService(EventRepository eventRepository, ImageService imageService, AddressService addressService) {
+    public EventService(EventRepository eventRepository, UserEventRepository userEventRepository, ImageService imageService, AddressService addressService) {
         this.eventRepository = eventRepository;
+        this.userEventRepository = userEventRepository;
         this.imageService = imageService;
         this.addressService = addressService;
     }
@@ -41,6 +46,29 @@ public class EventService {
                 .and(EventSpecification.hasStartTimeBetween(firsDate, secondDate));
         return eventRepository.findAll(spec);
 
+    }
+
+    public List<CustomerEventDTO> getEventsByUserId(String userId) {
+        List<UserEvent> userEvents = userEventRepository.findAllByUserId(userId);
+
+        return userEvents.stream().map(userEvent -> {
+            Event event = userEvent.getEvent();
+            return new CustomerEventDTO(
+                    event.getId(),
+                    event.getTitle(),
+                    event.getDescription(),
+                    event.getAddress(),
+                    event.getStartTime(),
+                    event.getEndTime(),
+                    event.getFreeEntry(),
+                    event.getTicketUnitPrice(),
+                    event.getTicketTax(),
+                    event.getImages(),
+                    event.getCompany(),
+                    userEvent.getAcquisitionDate(),
+                    userEvent.getCustomerRating()
+            );
+        }).toList();
     }
 
     public Event getEventById(String id) {
@@ -80,6 +108,27 @@ public class EventService {
         addressService.deleteAddress(event.getAddress());
 
         eventRepository.delete(event);
+    }
+
+    public void rateEvent(String id, int rate) {
+        UserEvent userEvent = userEventRepository.findByEventId(id);
+
+        if (userEvent != null) {
+            userEvent.setCustomerRating(rate);
+            userEventRepository.save(userEvent);
+        } else {
+            throw new EntityNotFoundException("Event not found with ID: " + id);
+        }
+    }
+
+    public void deleteUserEvent(String userId, String eventId) {
+        UserEvent userEvent = userEventRepository.findByEventIdAndUserId(eventId, userId);
+
+        if (userEvent != null) {
+            userEventRepository.delete(userEvent);
+        } else {
+            throw new EntityNotFoundException("Event not found with ID: " + userId);
+        }
     }
 
     public void uploadImages(Event event, MultipartFile[] files) {

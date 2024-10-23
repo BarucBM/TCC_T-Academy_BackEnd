@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -27,5 +28,8 @@ public class UserEvent {
     @ManyToOne
     private Event event;
 
-    private LocalDateTime registrationDate;
+    private int customerRating = 0;
+
+    @CreationTimestamp
+    private LocalDateTime acquisitionDate;
 }
