@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "notifications")
@@ -23,15 +22,11 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-//    @ManyToMany(mappedBy = "notifications")
-//    private List<User> users;
-
-//  @OneToMany
-//  private UserNotification userNotification;
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -39,16 +34,23 @@ public class Notification {
 
     private LocalDateTime sentAt;
 
+    @Column(nullable = false)
     private String type;
 
+    @Column(nullable = false)
     private String status;
 
+    @Column(name = "event_notifications", nullable = false)
     private boolean eventNotifications;
 
+    @Column(name = "reminder_notifications", nullable = false)
     private boolean reminderNotifications;
 
+    @Column(name = "weather_notifications", nullable = false)
     private boolean weatherNotifications;
 
-
+    @Lob
+    @Column(name = "user_data")
+    private byte[] userData;
 
 }

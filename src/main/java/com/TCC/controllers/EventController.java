@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
     ){
         return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, startDate, endDate));
 
@@ -49,4 +50,13 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.updateEvent(id, eventDTO));
     }
 
+//
+//    @GetMapping("/{id}/suggestions")
+//    public ResponseEntity<List<String>> getEventSuggestions(@PathVariable String id, @RequestParam String weatherData) {
+//
+//        Event event = eventService.getEventById(id);
+//
+//        List<String> suggestions = eventService.suggestEventChanges(event, weatherData);
+//        return ResponseEntity.status(HttpStatus.OK).body(suggestions);
+//    }
 }

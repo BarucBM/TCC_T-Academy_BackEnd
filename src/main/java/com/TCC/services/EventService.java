@@ -8,15 +8,18 @@ import com.TCC.repositories.EventRepository;
 import com.TCC.specifications.EventSpecification;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class EventService {
@@ -31,7 +34,7 @@ public class EventService {
         this.addressService = addressService;
     }
 
-    public List<Event> getAllEvents(String search, LocalDateTime firsDate, LocalDateTime secondDate) {
+    public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate) {
         Specification<Event> spec = Specification
                 .where(EventSpecification.titleContains(search))
                 .or(EventSpecification.descriptionContains(search))
@@ -82,4 +85,23 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    public List<String> suggestEventChanges(Event event, String weatherData) {
+        List<String> suggestions = new ArrayList<>();
+
+
+        if (weatherData.contains("rain")) {
+            suggestions.add("Sugira alteração do local para um ambiente coberto para o evento " + event.getTitle());
+        }
+
+        if (weatherData.contains("heat")) {
+            suggestions.add("Considere alterar o horário para um período mais fresco do dia para o evento " + event.getTitle());
+        }
+
+
+        if (weatherData.contains("cold")) {
+            suggestions.add("Recomende que os participantes venham agasalhados para o evento " + event.getTitle());
+        }
+
+        return suggestions;
+    }
 }

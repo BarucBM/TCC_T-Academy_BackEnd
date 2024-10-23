@@ -19,7 +19,6 @@ public class NotificationController {
     @Autowired
     private UserRepository userRepository;
 
-    // Recuperar preferências de notificação por userId
     @GetMapping("/{userId}")
     public ResponseEntity<List<Notification>> getNotifications(@PathVariable String userId) {
         return userRepository.findById(userId)

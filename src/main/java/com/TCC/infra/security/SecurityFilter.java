@@ -1,40 +1,48 @@
-package com.TCC.infra.security;
+    package com.TCC.infra.security;
 
-import com.TCC.repositories.UserRepository;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+    import com.TCC.repositories.UserRepository;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+    import org.springframework.security.core.context.SecurityContextHolder;
+    import org.springframework.security.core.userdetails.UserDetails;
+    import org.springframework.security.core.userdetails.UsernameNotFoundException;
+    import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+    import org.springframework.stereotype.Component;
+    import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+    import jakarta.servlet.FilterChain;
+    import jakarta.servlet.ServletException;
+    import jakarta.servlet.http.HttpServletRequest;
+    import jakarta.servlet.http.HttpServletResponse;
+    import java.io.IOException;
 
-@Component
-public class SecurityFilter extends OncePerRequestFilter {
+    @Component
+    public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
-    TokenService tokenService;
+        @Autowired
+        private TokenService tokenService;
 
-    @Autowired
-    UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = tokenService.extractTokenFromRequest(request);
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (token != null && !tokenService.isTokenBlacklisted(token)) {
-            var email = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByEmail(email);
+            String token = tokenService.extractTokenFromRequest(request);
 
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            if (token != null && !tokenService.isTokenBlacklisted(token)) {
+                String email = tokenService.validateToken(token);
+                UserDetails user = userRepository.findByEmail(email);
+
+
+                if (user != null) {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+
+
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
     }
-}

@@ -1,44 +1,41 @@
 package com.TCC.services;
 
-
-import com.TCC.domain.weather.Weather;
-import com.TCC.domain.weather.WeatherDTO;
-import com.TCC.repositories.WeatherRepository;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @Service
 public class WeatherService {
 
-    @Autowired
-    private WeatherRepository weatherRepository;
+
+    @Value("${weather.api.key}")
+    private String apiKey;
 
 
-    public List<Weather> getAllWeathers(){
-        return weatherRepository.findAll();
-    }
+    public String getWeatherForecast(String city) throws IOException {
+        String urlString = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=" + apiKey;
 
-    public Weather getWeatherById (String id){
-        return weatherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Weather not found!"));
-    }
 
-    public String deleteWeather (String id){
-        Weather weather = weatherRepository.findById(id).orElseThrow(() -> new RuntimeException("Weather not found!"));
-        weatherRepository.delete(weather);
-        return "Weather deleted!";
-    }
+        URL url = new URL(urlString);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
 
-    public Weather createWeather (Weather weather){
-        return weatherRepository.save(weather);
-    }
 
-    public Weather updateWeather (String id, WeatherDTO weatherDTO){
-        Weather weather = weatherRepository.findById(id).orElseThrow(() -> new RuntimeException("Weather not found!"));
-        BeanUtils.copyProperties(weatherDTO, weather);
-        return weatherRepository.save(weather);
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+
+        in.close();
+        conn.disconnect();
+
+        return content.toString();
     }
 }
