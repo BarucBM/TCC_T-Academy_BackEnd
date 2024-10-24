@@ -1,5 +1,6 @@
 package com.TCC.domain.customer;
 
+import com.TCC.domain.address.Address;
 import com.TCC.domain.cart.Cart;
 import com.TCC.domain.user.User;
 import jakarta.persistence.*;
@@ -23,7 +24,8 @@ public class Customer {
 
     private String name;
 
-    private String address;
+    @ManyToOne
+    private Address address;
 
     private String phone;
 

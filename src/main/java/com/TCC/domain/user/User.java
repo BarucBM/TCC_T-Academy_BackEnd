@@ -29,7 +29,7 @@ public class User implements UserDetails {
 
     private String email;
 
-    private String googleApiToken;
+    private Boolean hasGoogleAuth;
 
     private String password;
 
@@ -52,9 +52,11 @@ public class User implements UserDetails {
     // @OneToMany
     // private UserNotification userNotification;
 
-    public User(String email, String password, UserRole role) {
+    public User(String email, String password, UserRole role, Boolean hasGoogleAuth) {
         this.email = email;
         this.role = role;
+        this.password = password;
+        this.hasGoogleAuth = hasGoogleAuth;
     }
 
     @Override

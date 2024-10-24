@@ -2,7 +2,6 @@ package com.TCC.controllers;
 
 import com.TCC.domain.company.Company;
 import com.TCC.domain.company.CompanyDTO;
-import com.TCC.domain.company.CompanyResponseDTO;
 import com.TCC.services.CompanyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<CompanyResponseDTO> getCompanyById (@PathVariable(value = "id") String id){
+    public ResponseEntity<Company> getCompanyById (@PathVariable(value = "id") String id){
         return ResponseEntity.status(HttpStatus.OK).body(companyService.findCompanyById(id));
     }
 
