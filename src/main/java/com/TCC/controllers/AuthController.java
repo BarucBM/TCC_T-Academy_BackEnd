@@ -2,13 +2,19 @@ package com.TCC.controllers;
 
 import com.TCC.domain.company.CompanyUserDTO;
 import com.TCC.domain.customer.CustomerUserDTO;
+import com.TCC.domain.user.AuthDTO;
+import com.TCC.domain.user.LoginResponseDTO;
+import com.TCC.domain.user.User;
 import com.TCC.infra.security.TokenService;
 import com.TCC.services.CompanyService;
 import com.TCC.services.CustomerService;
 import com.TCC.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,7 +24,6 @@ public class AuthController {
     private final CustomerService customerService;
     private final CompanyService companyService;
     private final TokenService tokenService;
-
     private final UserService userService;
 
     public AuthController(AuthenticationManager authenticationManager, CustomerService customerService, CompanyService companyService, TokenService tokenService, UserService userService) {
@@ -45,5 +50,34 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthDTO data) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
+        var auth = this.authenticationManager.authenticate(usernamePassword);
+
+        User user = (User) auth.getPrincipal();
+
+        return ResponseEntity.ok(new LoginResponseDTO(tokenService.generateToken(user)));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String token = tokenService.extractTokenFromRequest(request);
+        tokenService.addTokenToBlacklist(token);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<Object> googleLogin(@RequestBody String email) {
+        User user = userService.findUserByEmail(email);
+
+        if (user != null && user.getHasGoogleAuth()) {
+            return ResponseEntity.ok(new LoginResponseDTO(tokenService.generateToken(user)));
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

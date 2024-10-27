@@ -2,9 +2,11 @@ package com.TCC.infra.security;
 
 import com.TCC.domain.user.User;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("tcc-api")
                     .withSubject(user.getEmail())
+                    .withClaim("id", user.getId())
+                    .withClaim("role", user.getRole().name())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
@@ -55,6 +59,14 @@ public class TokenService {
         var authHeader = request.getHeader("Authorization");
 
         return authHeader != null ? authHeader.replace("Bearer ", "") : null;
+    }
+
+    public String getUserIdFromToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        JWTVerifier verifier = JWT.require(algorithm).withIssuer("tcc-api").build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+
+        return decodedJWT.getClaim("id").asString();
     }
 
     public void addTokenToBlacklist(String token) {

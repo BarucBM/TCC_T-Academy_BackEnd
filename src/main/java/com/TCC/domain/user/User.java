@@ -1,5 +1,6 @@
 package com.TCC.domain.user;
 
+import com.TCC.domain.image.Image;
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.preferences.Preference;
 import jakarta.persistence.*;
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     private String password;
 
     private UserRole role;
+
+    @ManyToOne
+    private Image image;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

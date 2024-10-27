@@ -34,9 +34,12 @@ public class SecurityConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/google-login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/customer").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/company").permitAll()
-                        .anyRequest().permitAll() // TODO: Implement auth
+                        .requestMatchers(HttpMethod.POST, "/user/{id}/upload-photo").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
