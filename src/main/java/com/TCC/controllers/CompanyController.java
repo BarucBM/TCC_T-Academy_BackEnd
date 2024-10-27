@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class CompanyController {
     }
 
     @PutMapping(path = "/{id}")
+    @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<Company> updateCompany (@PathVariable(value = "id") String id, @RequestBody @Valid CompanyDTO companyDTO){
         companyService.updateCompany(id, companyDTO);
         return ResponseEntity.status(HttpStatus.OK).build();

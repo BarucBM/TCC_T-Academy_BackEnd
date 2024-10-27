@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -44,11 +45,13 @@ public class EventController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<Event> createEvent(@ModelAttribute @Valid EventDTO eventDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.createEvent(eventDTO));
     }
 
     @PostMapping("/rate/{id}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<String> rateEvent(@PathVariable String id, @RequestBody int rate) {
         try {
             eventService.rateEvent(id, rate);
@@ -60,6 +63,7 @@ public class EventController {
     }
 
     @PostMapping("/cancel")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<String> cancelEvent(@RequestBody @Valid CancelEventRequestDTO requestDTO) {
         try {
             eventService.deleteUserEvent(requestDTO.userId(), requestDTO.eventId());
@@ -71,6 +75,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<String> deleteEvent(@PathVariable String id) {
         try {
             eventService.deleteEvent(id);
@@ -81,6 +86,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('COMPANY')")
     public ResponseEntity<Object> updateEvent(@PathVariable String id, @ModelAttribute @Valid EventDTO eventDTO) {
         try {
             return ResponseEntity.ok(eventService.updateEvent(id, eventDTO));
