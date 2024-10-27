@@ -1,5 +1,6 @@
 package com.TCC.services;
 
+import com.TCC.domain.company.Company;
 import com.TCC.domain.event.CustomerEventDTO;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
@@ -13,14 +14,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-
-import java.io.IOException;
 import java.time.LocalDate;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +26,14 @@ public class EventService {
     private final UserEventRepository userEventRepository;
     private final ImageService imageService;
     private final AddressService addressService;
+    private final CompanyService companyService;
 
-    public EventService(EventRepository eventRepository, UserEventRepository userEventRepository, ImageService imageService, AddressService addressService) {
+    public EventService(EventRepository eventRepository, UserEventRepository userEventRepository, ImageService imageService, AddressService addressService, CompanyService companyService) {
         this.eventRepository = eventRepository;
         this.userEventRepository = userEventRepository;
         this.imageService = imageService;
         this.addressService = addressService;
+        this.companyService = companyService;
     }
 
     public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate) {
@@ -71,18 +68,25 @@ public class EventService {
         }).toList();
     }
 
+    public List<Event> getEventsOfUserCompany(String userId) {
+        return eventRepository.findAllByCompanyId(companyService.findCompanyByUserId(userId).getId());
+    }
+
     public Event getEventById(String id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found with ID: " + id));
     }
 
     @Transactional
-    public Event createEvent(EventDTO eventDTO) {
+    public Event createEvent(EventDTO eventDTO, String userId) {
         Event event = new Event();
         BeanUtils.copyProperties(eventDTO, event);
 
         event.setAddress(addressService.createAddress(eventDTO.address()));
         this.uploadImages(event, eventDTO.images());
+
+        Company company = companyService.findCompanyByUserId(userId);
+        event.setCompany(company);
 
         return eventRepository.save(event);
     }

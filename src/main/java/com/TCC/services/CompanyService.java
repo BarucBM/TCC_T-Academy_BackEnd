@@ -39,10 +39,12 @@ public class CompanyService {
 
 
     public Company findCompanyById(String id) {
-        Company company = this.companyRepository.findById(id)
+        return this.companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + id));
+    }
 
-        return company;
+    public Company findCompanyByUserId(String id) {
+        return this.companyRepository.findByUserId(id);
     }
 
     @Transactional

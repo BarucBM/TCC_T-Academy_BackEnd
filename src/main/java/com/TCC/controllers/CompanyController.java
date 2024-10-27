@@ -40,5 +40,4 @@ public class CompanyController {
         companyService.updateCompany(id, companyDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-
 }
