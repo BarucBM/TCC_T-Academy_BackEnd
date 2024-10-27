@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/google-login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh-token").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/customer").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/company").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/{id}/upload-photo").permitAll()

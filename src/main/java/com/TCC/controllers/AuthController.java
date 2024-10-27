@@ -3,7 +3,8 @@ package com.TCC.controllers;
 import com.TCC.domain.company.CompanyUserDTO;
 import com.TCC.domain.customer.CustomerUserDTO;
 import com.TCC.domain.user.AuthDTO;
-import com.TCC.domain.user.LoginResponseDTO;
+import com.TCC.domain.user.TokenRequestDTO;
+import com.TCC.domain.user.TokenResponseDTO;
 import com.TCC.domain.user.User;
 import com.TCC.infra.security.TokenService;
 import com.TCC.services.CompanyService;
@@ -53,13 +54,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthDTO data) {
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid AuthDTO data) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
         User user = (User) auth.getPrincipal();
 
-        return ResponseEntity.ok(new LoginResponseDTO(tokenService.generateToken(user)));
+        return ResponseEntity.ok(tokenService.generateToken(user));
     }
 
     @PostMapping("/logout")
@@ -75,9 +76,14 @@ public class AuthController {
         User user = userService.findUserByEmail(email);
 
         if (user != null && user.getHasGoogleAuth()) {
-            return ResponseEntity.ok(new LoginResponseDTO(tokenService.generateToken(user)));
+            return ResponseEntity.ok(tokenService.generateToken(user));
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @PostMapping("refresh-token")
+    public ResponseEntity<TokenResponseDTO> refreshToken(@RequestBody TokenRequestDTO requestDTO) {
+        return ResponseEntity.ok(tokenService.generateRefreshToken(requestDTO.refreshToken()));
     }
 }
