@@ -2,11 +2,8 @@ package com.TCC.services;
 
 import com.TCC.domain.company.Company;
 import com.TCC.domain.company.CompanyDTO;
-import com.TCC.domain.company.CompanyResponseDTO;
 import com.TCC.domain.company.CompanyUserDTO;
-import com.TCC.domain.customer.Customer;
 import com.TCC.domain.user.User;
-import com.TCC.domain.user.UserResponseDTO;
 import com.TCC.domain.user.UserRole;
 import com.TCC.repositories.CompanyRepository;
 import com.TCC.specifications.CompanySpecification;
@@ -24,11 +21,13 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
     private final UserService userService;
     private final PreferenceService preferenceService;
+    private final AddressService addressService;
 
-    public CompanyService(CompanyRepository companyRepository, UserService userService, PreferenceService preferenceService) {
+    public CompanyService(CompanyRepository companyRepository, UserService userService, AddressService addressService , PreferenceService preferenceService) {
         this.companyRepository = companyRepository;
         this.userService = userService;
         this.preferenceService = preferenceService;
+        this.addressService = addressService;
     }
 
     public List<Company> getAllCompanies(String name, String address, String phone, String email) {
@@ -41,25 +40,31 @@ public class CompanyService {
     }
 
 
-    public CompanyResponseDTO findCompanyById(String id) {
-        Company company = this.companyRepository.findById(id)
+    public Company findCompanyById(String id) {
+        return this.companyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + id));
+    }
 
-        return this.getCompanyResponseDTO(company);
+    public Company findCompanyByUserId(String id) {
+        return this.companyRepository.findByUserId(id);
     }
 
     @Transactional
-    public CompanyResponseDTO createCompanyWithUser(CompanyUserDTO data) {
+    public Company createCompanyWithUser(CompanyUserDTO data) {
         User user = new User();
         BeanUtils.copyProperties(data.user(), user);
-        user.setRole(UserRole.CUSTOMER);
+        user.setRole(UserRole.COMPANY);
+        user.setHasGoogleAuth(false);
 
         Company company = new Company();
         BeanUtils.copyProperties(data.company(), company);
 
         company.setUser(userService.createUser(user));
+        company.setAddress(addressService.createAddress(data.company().address()));
         preferenceService.newUserPreferences(company.getUser().getId());
-        return this.getCompanyResponseDTO(companyRepository.save(company));
+        return companyRepository.save(company);
+
+
     }
 
     @Transactional
@@ -70,16 +75,5 @@ public class CompanyService {
         BeanUtils.copyProperties(companyDTO, existingCompany);
 
         companyRepository.save(existingCompany);
-    }
-
-    private CompanyResponseDTO getCompanyResponseDTO(Company company) {
-        return new CompanyResponseDTO(
-                company.getId(),
-                company.getName(),
-                company.getAddress(),
-                company.getPhone(),
-                company.getDuns(),
-                new UserResponseDTO(company.getUser().getId(), company.getUser().getEmail(), company.getUser().getGoogleApiToken())
-        );
     }
 }

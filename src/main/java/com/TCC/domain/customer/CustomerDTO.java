@@ -1,14 +1,12 @@
 package com.TCC.domain.customer;
 
-import com.TCC.domain.address.Address;
+import com.TCC.domain.address.AddressDTO;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
 public record CustomerDTO(
-        @NotBlank
-        String name,
-
-        String address,
-
+        @NotBlank String name,
+        @Valid AddressDTO address,
         String phone
 ) {
 }
