@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "prefrences")
+@Table(name = "preferences")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,9 +25,12 @@ public class Preference {
     @ManyToOne
     private User user;
 
-    private String notificationType;
+    private NotificationType notificationType;
 
-    private String alertFrequency;
+    private Integer alertFrequency;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    private Boolean isActive;
 }

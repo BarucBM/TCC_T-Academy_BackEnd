@@ -15,11 +15,13 @@ import org.springframework.stereotype.Service;
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final UserService userService;
+    private final PreferenceService preferenceService;
     private final AddressService addressService;
 
-    public CustomerService(CustomerRepository customerRepository, UserService userService, AddressService addressService) {
+    public CustomerService(CustomerRepository customerRepository, UserService userService, AddressService addressService, PreferenceService preferenceService) {
         this.customerRepository = customerRepository;
         this.userService = userService;
+        this.preferenceService = preferenceService;
         this.addressService = addressService;
     }
 
@@ -35,13 +37,14 @@ public class CustomerService {
         User user = new User();
         BeanUtils.copyProperties(data.user(), user);
         user.setRole(UserRole.CUSTOMER);
-        user.setHasGoogleAuth(true);
 
         Customer customer = new Customer();
         BeanUtils.copyProperties(data.customer(), customer);
 
         customer.setUser(userService.createUser(user));
+
         customer.setAddress(addressService.createAddress(data.customer().address()));
+        preferenceService.newUserPreferences(customer.getUser().getId());
 
         return customerRepository.save(customer);
     }

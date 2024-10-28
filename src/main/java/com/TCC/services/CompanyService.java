@@ -20,11 +20,13 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final UserService userService;
+    private final PreferenceService preferenceService;
     private final AddressService addressService;
 
-    public CompanyService(CompanyRepository companyRepository, UserService userService, AddressService addressService) {
+    public CompanyService(CompanyRepository companyRepository, UserService userService, AddressService addressService , PreferenceService preferenceService) {
         this.companyRepository = companyRepository;
         this.userService = userService;
+        this.preferenceService = preferenceService;
         this.addressService = addressService;
     }
 
@@ -59,8 +61,10 @@ public class CompanyService {
 
         company.setUser(userService.createUser(user));
         company.setAddress(addressService.createAddress(data.company().address()));
-
+        preferenceService.newUserPreferences(company.getUser().getId());
         return companyRepository.save(company);
+
+
     }
 
     @Transactional
