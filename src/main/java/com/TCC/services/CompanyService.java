@@ -23,10 +23,12 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final UserService userService;
+    private final PreferenceService preferenceService;
 
-    public CompanyService(CompanyRepository companyRepository, UserService userService) {
+    public CompanyService(CompanyRepository companyRepository, UserService userService, PreferenceService preferenceService) {
         this.companyRepository = companyRepository;
         this.userService = userService;
+        this.preferenceService = preferenceService;
     }
 
     public List<Company> getAllCompanies(String name, String address, String phone, String email) {
@@ -56,7 +58,7 @@ public class CompanyService {
         BeanUtils.copyProperties(data.company(), company);
 
         company.setUser(userService.createUser(user));
-
+        preferenceService.newUserPreferences(company.getUser().getId());
         return this.getCompanyResponseDTO(companyRepository.save(company));
     }
 

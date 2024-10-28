@@ -2,6 +2,7 @@ package com.TCC.domain.user;
 
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.preferences.Preference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,6 +29,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+
     private String email;
 
     private String googleApiToken;
@@ -38,8 +41,9 @@ public class User implements UserDetails {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // @OneToMany(mappedBy = "user")
-    // private List<Preference> preference;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Preference> preference;
 
     // @ManyToMany
     // @JoinTable(

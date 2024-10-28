@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 public record UserDTO(
         @NotBlank String email,
         String googleApiToken,
-        UserRole role
+        UserRole role,
+        String password
 ) {
 }
