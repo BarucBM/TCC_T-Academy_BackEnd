@@ -24,10 +24,12 @@ public class CustomerService {
     }
 
     public Customer findCustomerById(String id) {
-        Customer customer = this.customerRepository.findById(id)
+        return this.customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + id));
+    }
 
-        return customer;
+    public Customer findCustomerByUserId(String id) {
+        return this.customerRepository.findByUserId(id);
     }
 
     @Transactional
@@ -52,6 +54,8 @@ public class CustomerService {
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + id));
 
         BeanUtils.copyProperties(customerDTO, existingCustomer);
+
+        existingCustomer.setAddress(addressService.updateAddress(existingCustomer.getAddress().getId(), customerDTO.address()));
 
         customerRepository.save(existingCustomer);
     }

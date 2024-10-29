@@ -52,7 +52,15 @@ public class UserService {
     public void uploadPhoto(String userId, MultipartFile file) {
         User user = this.findUserById(userId);
 
+        Image image = user.getImage();
+
+        if (image != null) {
+            user.setImage(null);
+            imageService.deleteImage(image);
+        }
+
         user.setImage(imageService.uploadImage(file));
+
         userRepository.save(user);
     }
 
@@ -60,8 +68,11 @@ public class UserService {
         User user = this.findUserById(userId);
 
         Image image = user.getImage();
-        user.setImage(null);
-        imageService.deleteImage(image);
+
+        if (image != null) {
+            user.setImage(null);
+            imageService.deleteImage(image);
+        }
 
         userRepository.save(user);
     }

@@ -70,6 +70,8 @@ public class CompanyService {
 
         BeanUtils.copyProperties(companyDTO, existingCompany);
 
+        existingCompany.setAddress(addressService.updateAddress(existingCompany.getAddress().getId(), companyDTO.address()));
+
         companyRepository.save(existingCompany);
     }
 }
