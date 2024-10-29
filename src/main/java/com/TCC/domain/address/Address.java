@@ -35,7 +35,7 @@ public class Address {
 
     private String country;
 
-    private String latitude;
+    private double latitude;
 
-    private String longitude;
+    private double longitude;
 }

@@ -11,7 +11,7 @@ import java.net.http.HttpResponse;
 @Service
 public class GeminiAIService {
 
-    private final String apiKey = "chave"; // substituir
+    private final String apiKey = "AIzaSyCRsyI1wQWFoF5VIkweIki8bfHSnk-wXqk"; // substituir
     private final String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey;
 
     public String getSuggestions(String prompt) throws IOException, InterruptedException {

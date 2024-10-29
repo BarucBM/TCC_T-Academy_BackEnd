@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -27,7 +27,6 @@ public class EventController {
             @RequestParam(required = false) LocalDate endDate
     ){
         return ResponseEntity.status(HttpStatus.OK).body(eventService.getAllEvents(title, startDate, endDate));
-
     }
 
     @GetMapping("/{id}")
@@ -50,13 +49,12 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.OK).body(eventService.updateEvent(id, eventDTO));
     }
 
-//
-//    @GetMapping("/{id}/suggestions")
-//    public ResponseEntity<List<String>> getEventSuggestions(@PathVariable String id, @RequestParam String weatherData) {
-//
-//        Event event = eventService.getEventById(id);
-//
-//        List<String> suggestions = eventService.suggestEventChanges(event, weatherData);
-//        return ResponseEntity.status(HttpStatus.OK).body(suggestions);
-//    }
+    @GetMapping("/nearby")
+    public ResponseEntity<String> getNearbyEvents(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double radius) throws IOException, InterruptedException {
+        String geminiResponse = eventService.getNearbyEventsForPrompt(latitude, longitude, radius);
+        return ResponseEntity.ok(geminiResponse);
+    }
 }
