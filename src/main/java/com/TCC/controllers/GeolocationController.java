@@ -1,6 +1,6 @@
 package com.TCC.controllers;
 
-import com.TCC.services.GeolocationService; // Importe o GeolocationService
+import com.TCC.services.GeolocationService; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +17,12 @@ public class GeolocationController {
         this.geolocationService = geolocationService;
     }
 
-    @GetMapping("/calcularDistancia")
-    public ResponseEntity<Double> calcularDistancia(@RequestParam String latitudeString, @RequestParam String longitudeString) {
+    @GetMapping("/calculateDistance")
+    public ResponseEntity<Double> CalculateDistance(@RequestParam String latitudeString, @RequestParam String longitudeString) {
         double latitude = Double.parseDouble(latitudeString);
         double longitude = Double.parseDouble(longitudeString);
 
-        double distancia = geolocationService.calcularDistancia(latitude, longitude);
-        return ResponseEntity.ok(distancia);
+        double distance = geolocationService.calculateDistance(latitude, longitude);
+        return ResponseEntity.ok(distance);
     }
 }
