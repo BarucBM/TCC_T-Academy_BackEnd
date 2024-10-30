@@ -1,7 +1,9 @@
 package com.TCC.domain.user;
 
+import com.TCC.domain.image.Image;
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.preferences.Preference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -27,19 +30,24 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+
     private String email;
+
+    private Boolean hasGoogleAuth;
 
     private String password;
 
-    private String googleApiToken;
-
     private UserRole role;
+
+    @ManyToOne
+    private Image image;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    // @OneToMany(mappedBy = "user")
-    // private List<Preference> preference;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Preference> preference;
 
     // @ManyToMany
     // @JoinTable(
@@ -52,10 +60,11 @@ public class User implements UserDetails {
     // @OneToMany
     // private UserNotification userNotification;
 
-    public User(String email, String password, UserRole role) {
+    public User(String email, String password, UserRole role, Boolean hasGoogleAuth) {
         this.email = email;
-        this.password = password;
         this.role = role;
+        this.password = password;
+        this.hasGoogleAuth = hasGoogleAuth;
     }
 
     @Override
@@ -65,7 +74,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     @Override

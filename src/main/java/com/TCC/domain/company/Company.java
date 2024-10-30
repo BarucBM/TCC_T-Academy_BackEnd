@@ -1,5 +1,6 @@
 package com.TCC.domain.company;
 
+import com.TCC.domain.address.Address;
 import com.TCC.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,8 @@ public class Company {
 
     private String name;
 
-    private String address;
+    @ManyToOne
+    private Address address;
 
     private String phone;
 

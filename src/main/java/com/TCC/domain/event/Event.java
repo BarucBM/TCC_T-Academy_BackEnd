@@ -8,6 +8,7 @@ import com.TCC.domain.image.Image;
 import com.TCC.domain.notification.Notification;
 import com.TCC.domain.user.UserEvent;
 import com.TCC.domain.weather.Weather;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,12 +63,10 @@ public class Event {
     )
     private List<Image> images;
 
-//    @OneToMany(mappedBy = "event")
-//    private List<Weather> weathers;
-//
+    @JsonBackReference
+    @OneToMany(mappedBy = "event")
+    private List<UserEvent> usersEvents;
+
 //    @OneToMany(mappedBy = "event")
 //    private List<Notification> notifications;
-//
-//    @OneToMany(mappedBy = "event")
-//    private List<UserEvent> usersEvent;
 }

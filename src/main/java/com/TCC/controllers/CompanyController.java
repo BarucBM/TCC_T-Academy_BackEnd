@@ -2,12 +2,12 @@ package com.TCC.controllers;
 
 import com.TCC.domain.company.Company;
 import com.TCC.domain.company.CompanyDTO;
-import com.TCC.domain.company.CompanyResponseDTO;
 import com.TCC.services.CompanyService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +16,11 @@ import java.util.List;
 @RequestMapping("/company")
 public class CompanyController {
 
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Company>> getAllCompanies (
@@ -30,14 +33,18 @@ public class CompanyController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<CompanyResponseDTO> getCompanyById (@PathVariable(value = "id") String id){
+    public ResponseEntity<Company> getCompanyById (@PathVariable() String id){
         return ResponseEntity.status(HttpStatus.OK).body(companyService.findCompanyById(id));
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Company> updateCompany (@PathVariable(value = "id") String id, @RequestBody @Valid CompanyDTO companyDTO){
-        companyService.updateCompany(id, companyDTO);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    @PreAuthorize("hasRole('COMPANY')")
+    public ResponseEntity<Object> updateCompany (@PathVariable() String id, @RequestBody @Valid CompanyDTO companyDTO){
+        try {
+            companyService.updateCompany(id, companyDTO);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
-
 }
