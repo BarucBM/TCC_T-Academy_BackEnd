@@ -28,5 +28,8 @@ public class NotificationDTO{
         @NotBlank
         String ownerRef;
 
+        @NotBlank
+        String eventId;
+
 
 }

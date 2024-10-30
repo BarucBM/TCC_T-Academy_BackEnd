@@ -23,6 +23,9 @@ public class NotificationsService {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private EventService eventService;
+
 
     public String sendEmail(String userId, NotificationDTO notificationDTO){
         try{
@@ -39,8 +42,9 @@ public class NotificationsService {
             notification.setUser(user);
             notification.setSentAt(LocalDateTime.now());
             notification.setStatus("Enviado");
+            notification.setEvent(eventService.getEventById(notificationDTO.getEventId()));
 
-            notificationRepository.save(notification);
+            //notificationRepository.save(notification);
             return "Email enviado!";
         }catch (Exception e){
             e.printStackTrace();
