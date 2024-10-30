@@ -33,7 +33,7 @@ public class NotificationController {
     }
 
 
-    @PostMapping("/{userId}/teste")
+    @PostMapping("/{userId}")
     public ResponseEntity<Notification> saveNotification(@PathVariable String userId, @RequestBody Notification notification) {
         return userRepository.findById(userId)
                 .map(user -> {
@@ -44,7 +44,7 @@ public class NotificationController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/email/{id}")
     public ResponseEntity<String> sendEmail(@PathVariable("id") String userId, @RequestBody NotificationDTO notificationDTO){
         return ResponseEntity.ok(notificationsService.sendEmail(userId, notificationDTO));
     }
