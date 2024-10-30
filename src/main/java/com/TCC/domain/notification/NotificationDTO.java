@@ -16,7 +16,7 @@ public class NotificationDTO{
         String text;
 
         @NotBlank
-        String subjetc;
+        String subject ;
 
         @NotBlank
         String emailTo;

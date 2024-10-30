@@ -1,6 +1,7 @@
 package com.TCC.services;
 
 import com.TCC.domain.notification.Notification;
+import com.TCC.domain.notification.NotificationDTO;
 import com.TCC.domain.user.User;
 import com.TCC.producers.EmailProducer;
 import com.TCC.repositories.NotificationRepository;
@@ -23,18 +24,19 @@ public class NotificationsService {
     private NotificationRepository notificationRepository;
 
 
-    public String sendEmail(String userId){
+    public String sendEmail(String userId, NotificationDTO notificationDTO){
         try{
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("user not found!"));
 
+
+
+
+
+
+            emailProducer.sendEmail(user, notificationDTO);
             Notification notification = new Notification();
-            notification.setTitle("Email enviado pelo microservice do TCC");
-            notification.setMessage("teste");
             notification.setUser(user);
-
-            emailProducer.sendEmail(user, notification);
-
             notification.setSentAt(LocalDateTime.now());
             notification.setStatus("Enviado");
 

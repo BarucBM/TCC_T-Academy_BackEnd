@@ -20,16 +20,13 @@ public class EmailProducer {
     @Value("${email.ms}")
     private String emailFrom;
 
-    public void sendEmail(User user, Notification notification){
-        NotificationDTO notificationDTO = new NotificationDTO();
+    public void sendEmail(User user, NotificationDTO notification){
 
-        notificationDTO.setSubjetc(notification.getTitle());
-        notificationDTO.setText(notification.getMessage());
-        notificationDTO.setEmailTo(user.getEmail());
-        notificationDTO.setEmailFrom(emailFrom);
-        notificationDTO.setOwnerRef("Baruc");
+        notification.setEmailTo(user.getEmail());
+        notification.setEmailFrom(emailFrom);
+        notification.setOwnerRef("Baruc");
 
-        rabbitTemplate.convertAndSend("", routingKey, notificationDTO);
+        rabbitTemplate.convertAndSend("", routingKey, notification);
     }
 
 }

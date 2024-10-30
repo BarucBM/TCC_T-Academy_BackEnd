@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/register/customer").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/company").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/{id}/upload-photo").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/notifications/{id}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

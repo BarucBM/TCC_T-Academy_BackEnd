@@ -1,6 +1,7 @@
 package com.TCC.controllers;
 
 import com.TCC.domain.notification.Notification;
+import com.TCC.domain.notification.NotificationDTO;
 import com.TCC.repositories.NotificationRepository;
 import com.TCC.repositories.UserRepository;
 import com.TCC.services.NotificationsService;
@@ -44,7 +45,7 @@ public class NotificationController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<String> sendEmail(@PathVariable("id") String userId){
-        return ResponseEntity.ok(notificationsService.sendEmail(userId));
+    public ResponseEntity<String> sendEmail(@PathVariable("id") String userId, @RequestBody NotificationDTO notificationDTO){
+        return ResponseEntity.ok(notificationsService.sendEmail(userId, notificationDTO));
     }
 }
