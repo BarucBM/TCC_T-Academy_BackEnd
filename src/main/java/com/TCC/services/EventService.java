@@ -8,6 +8,7 @@ import com.TCC.domain.image.Image;
 import com.TCC.domain.user.UserEvent;
 import com.TCC.repositories.EventRepository;
 import com.TCC.repositories.UserEventRepository;
+import com.TCC.repositories.UserRepository;
 import com.TCC.specifications.EventSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,13 +28,15 @@ public class EventService {
     private final ImageService imageService;
     private final AddressService addressService;
     private final CompanyService companyService;
+    private final UserRepository userRepository;
 
-    public EventService(EventRepository eventRepository, UserEventRepository userEventRepository, ImageService imageService, AddressService addressService, CompanyService companyService) {
+    public EventService(EventRepository eventRepository, UserEventRepository userEventRepository, ImageService imageService, AddressService addressService, CompanyService companyService, UserRepository userRepository) {
         this.eventRepository = eventRepository;
         this.userEventRepository = userEventRepository;
         this.imageService = imageService;
         this.addressService = addressService;
         this.companyService = companyService;
+        this.userRepository = userRepository;
     }
 
     public List<Event> getAllEvents(String search, LocalDate firsDate, LocalDate secondDate) {
@@ -125,11 +128,30 @@ public class EventService {
         }
     }
 
-    public void deleteUserEvent(String userId, String eventId) {
-        UserEvent userEvent = userEventRepository.findByEventIdAndUserId(eventId, userId);
+    public void createUserEvent(String userId, String eventId){
+        List<UserEvent> userEvents = userEventRepository.findByEventIdAndUserId(eventId, userId);
+        if(userEvents.isEmpty()){
+            UserEvent userEvent = new UserEvent();
+            userEvent.setUser(userRepository.findById(userId)
+                    .orElseThrow(()-> new RuntimeException("User not found!")));
 
-        if (userEvent != null) {
-            userEventRepository.delete(userEvent);
+            userEvent.setEvent(eventRepository.findById(eventId)
+                    .orElseThrow(()-> new RuntimeException("Event not found!")));
+
+            userEventRepository.save(userEvent);
+        }else{
+            System.out.println("Event already added!");
+        }
+
+    }
+
+    public void deleteUserEvent(String userId, String eventId) {
+        List<UserEvent> userEvent = userEventRepository.findByEventIdAndUserId(eventId, userId);
+
+        if (!userEvent.isEmpty()) {
+            for (UserEvent event: userEvent){
+                userEventRepository.delete(event);
+            }
         } else {
             throw new EntityNotFoundException("Event not found with ID: " + userId);
         }
