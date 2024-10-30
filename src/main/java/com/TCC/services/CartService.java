@@ -30,11 +30,12 @@ public class CartService {
     @Autowired
     private UserRepository userRepository;
 
-    public Cart getCartByUser (String userId){
-        User user = userRepository.findById(userId)
+    public Cart getCartByUser (String customerId){
+        User user = userRepository.findById(customerId)
                 .orElseThrow(()-> new RuntimeException("User not found!"));
 
         Customer customer = customerRepository.findByUserId(user.getId());
+
 
         return cartRepository.findByCustomer(customer)
                 .orElseGet(()-> createCustomerCart(customer));
@@ -49,7 +50,7 @@ public class CartService {
         boolean flag = false;
 
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new RuntimeException("User not found!"));
 
         Customer customer = customerRepository.findByUserId(user.getId());
 
@@ -68,13 +69,17 @@ public class CartService {
         return cartRepository.save(customer.getCart());
     }
 
-    public void deleteCartItem (Long id, String userId){
+    public void deleteCartItem (Long id, String userid){
         CartItem cartItem = cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found!"));
         cartItemRepository.delete(cartItem);
-        Customer customer = customerRepository.findByUserId(userId);
+        User user = userRepository.findById(userid)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+
         Cart cart = cartRepository
-                .findByCustomer(customer)
+                .findByCustomer(customerRepository
+                        .findByUserId(user.getId()))
                 .orElseThrow(() -> new RuntimeException("Cart not found!"));
 
         cart.getCartEvents().removeIf(event -> Objects.equals(event.getId(), id));

@@ -115,4 +115,14 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PostMapping("/buy")
+    public ResponseEntity<String> createUserEvent(@RequestBody @Valid CancelEventRequestDTO requestDTO){
+        try{
+            eventService.createUserEvent(requestDTO.userId(), requestDTO.eventId());
+            return ResponseEntity.ok().build();
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

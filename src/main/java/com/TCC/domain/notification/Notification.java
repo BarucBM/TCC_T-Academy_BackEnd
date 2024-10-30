@@ -1,6 +1,7 @@
 package com.TCC.domain.notification;
 
 import com.TCC.domain.event.Event;
+import com.TCC.domain.preferences.NotificationType;
 import com.TCC.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,10 +46,6 @@ public class Notification {
 
     private String status;
 
-    private boolean eventNotifications;
-
-    private boolean reminderNotifications;
-
-    private boolean weatherNotifications;
+    private NotificationType notificationType;
 
 }
