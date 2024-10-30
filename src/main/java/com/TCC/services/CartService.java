@@ -46,10 +46,10 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Cart not found!"));
     }
 
-    public Cart addCartItem(String id, CartItemDTO cartItemDTO) {
+    public Cart addCartItem(String userId, CartItemDTO cartItemDTO) {
         boolean flag = false;
 
-        User user = userRepository.findById(id)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
         Customer customer = customerRepository.findByUserId(user.getId());
