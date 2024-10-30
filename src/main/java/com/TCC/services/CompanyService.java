@@ -63,8 +63,6 @@ public class CompanyService {
         company.setAddress(addressService.createAddress(data.company().address()));
         preferenceService.newUserPreferences(company.getUser().getId());
         return companyRepository.save(company);
-
-
     }
 
     @Transactional
@@ -73,6 +71,8 @@ public class CompanyService {
                 .orElseThrow(() -> new EntityNotFoundException("Company not found with ID: " + id));
 
         BeanUtils.copyProperties(companyDTO, existingCompany);
+
+        existingCompany.setAddress(addressService.updateAddress(existingCompany.getAddress().getId(), companyDTO.address()));
 
         companyRepository.save(existingCompany);
     }

@@ -1,6 +1,8 @@
 package com.TCC.controllers;
 
 import com.TCC.infra.security.TokenService;
+import com.TCC.services.CompanyService;
+import com.TCC.services.CustomerService;
 import com.TCC.services.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final CompanyService companyService;
+    private final CustomerService customerService;
     private final TokenService tokenService;
 
-    public UserController(UserService userService, TokenService tokenService) {
+    public UserController(UserService userService, CompanyService companyService, CustomerService customerService, TokenService tokenService) {
         this.userService = userService;
+        this.companyService = companyService;
+        this.customerService = customerService;
         this.tokenService = tokenService;
     }
 
@@ -27,6 +33,28 @@ public class UserController {
             String token = tokenService.extractTokenFromRequest(request);
 
             return ResponseEntity.ok(userService.getUserProfile(tokenService.getUserIdFromToken(token)));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/company")
+    public ResponseEntity<Object> getUserCompany(HttpServletRequest request) {
+        try {
+            String userId = tokenService.getUserIdFromToken(tokenService.extractTokenFromRequest(request));
+
+            return ResponseEntity.ok(companyService.findCompanyByUserId(userId));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/customer")
+    public ResponseEntity<Object> getUserCustomer(HttpServletRequest request) {
+        try {
+            String userId = tokenService.getUserIdFromToken(tokenService.extractTokenFromRequest(request));
+
+            return ResponseEntity.ok(customerService.findCustomerByUserId(userId));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
