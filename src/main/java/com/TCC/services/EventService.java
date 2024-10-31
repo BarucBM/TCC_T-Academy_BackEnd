@@ -1,6 +1,9 @@
 package com.TCC.services;
 
+import com.TCC.domain.calendar.CalendarId;
+import com.TCC.domain.calendar.TokenRequest;
 import com.TCC.domain.company.Company;
+import com.TCC.domain.event.CalendarEventDTO;
 import com.TCC.domain.event.CustomerEventDTO;
 import com.TCC.domain.event.Event;
 import com.TCC.domain.event.EventDTO;
@@ -10,12 +13,21 @@ import com.TCC.repositories.EventRepository;
 import com.TCC.repositories.UserEventRepository;
 import com.TCC.repositories.UserRepository;
 import com.TCC.specifications.EventSpecification;
+import com.google.gson.Gson;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,4 +189,66 @@ public class EventService {
             imageService.deleteImage(image);
         }
     }
+
+    public void addEventToCalendar(TokenRequest tokenRequest, CalendarId calendarId, String eventId) throws IOException {
+        String calendarApiUrl = "https://www.googleapis.com/calendar/v3/calendars/" + calendarId.getId() + "/events";
+        String authorizationToken = tokenRequest.getToken();
+        URL url = new URL(calendarApiUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+
+        connection.setRequestProperty("Authorization", "Bearer " + authorizationToken);
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+
+        Event event = getEventById(eventId);
+
+        LocalDate startDate = event.getStartTime().toLocalDate();
+        LocalDate endDate = event.getEndTime().toLocalDate();
+        String title = event.getTitle();
+
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException("Start time and end time cannot be null");
+        }
+
+        CalendarEventDTO eventDto = new CalendarEventDTO(startDate, endDate, title);
+
+        Gson gson = GsonConfig.createGson();
+        String jsonInputString = gson.toJson(eventDto);
+
+        try (OutputStream os = connection.getOutputStream()) {
+            byte[] input = jsonInputString.getBytes("utf-8");
+            os.write(input, 0, input.length);
+        }
+
+        int responseCode = connection.getResponseCode();
+        StringBuilder response = new StringBuilder();
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+            String responseLine;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+        } catch (IOException e) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8"))) {
+                String responseLine;
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
+            }
+        }
+
+        System.out.println("Response Code: " + responseCode);
+        System.out.println("Response Body: " + response.toString());
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            System.out.println("Event added successfully.");
+        } else {
+            System.out.println("Failed to add event: " + response.toString());
+            throw new IOException("Failed to add event: " + response.toString());
+        }
+    }
+
+
 }

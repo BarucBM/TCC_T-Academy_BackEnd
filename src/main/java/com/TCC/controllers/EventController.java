@@ -1,9 +1,8 @@
 package com.TCC.controllers;
 
-import com.TCC.domain.event.CancelEventRequestDTO;
-import com.TCC.domain.event.CustomerEventDTO;
-import com.TCC.domain.event.Event;
-import com.TCC.domain.event.EventDTO;
+import com.TCC.domain.calendar.CalendarId;
+import com.TCC.domain.calendar.TokenRequest;
+import com.TCC.domain.event.*;
 import com.TCC.infra.security.TokenService;
 import com.TCC.services.EventService;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -117,12 +117,17 @@ public class EventController {
     }
 
     @PostMapping("/buy")
-    public ResponseEntity<String> createUserEvent(@RequestBody @Valid CancelEventRequestDTO requestDTO){
-        try{
+    public ResponseEntity<String> createUserEvent(@RequestBody @Valid UserEventRequestDTO userEventRequestDTO){
+        try {
+            CancelEventRequestDTO requestDTO = userEventRequestDTO.getRequestDTO();
             eventService.createUserEvent(requestDTO.userId(), requestDTO.eventId());
+            eventService.addEventToCalendar(userEventRequestDTO.getTokenRequest(), userEventRequestDTO.getCalendarId(), requestDTO.eventId());
             return ResponseEntity.ok().build();
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
+
 }
